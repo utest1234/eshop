@@ -1,0 +1,109 @@
+{% extends 'layout.html' %}
+{% load humanize %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+
+        <div class="row g-0 align-items-center">
+
+            <!-- IMAGE -->
+            <div class="col-md-5">
+                <img src="{{ product.image.url }}"
+                     class="img-fluid"
+                     style="height: 400px; width: 100%; object-fit: cover;">
+            </div>
+
+            <!-- DETAILS -->
+            <div class="col-md-7">
+                <div class="card-body p-4">
+
+                    <h2 class="fw-bold mb-2">
+                        {{ product.name }}
+                    </h2>
+
+                    <p class="text-muted mb-3">
+                        {{ product.description }}
+                    </p>
+
+                    {% if product.is_sale %}
+
+                        <div class="mb-2">
+                            <span class="badge bg-danger">Хямдралтай</span>
+                        </div>
+
+                        <p class="mb-1">
+                            <span class="text-muted text-decoration-line-through fs-5">
+                                {{ product.price|floatformat:0|intcomma }}₮
+                            </span>
+                        </p>
+
+                        <h3 class="fw-bold text-danger">
+                            {{ product.sale_price|floatformat:0|intcomma }}₮
+                        </h3>
+
+                    {% else %}
+
+                        <h3 class="fw-bold">
+                            {{ product.price|floatformat:0|intcomma }}₮
+                        </h3>
+
+                    {% endif %}
+
+                    <!-- BUTTONS -->
+                    <div class="mt-4 d-flex gap-2">
+
+                        <a href="{% url 'home' %}"
+                           class="btn btn-outline-secondary rounded-pill px-4">
+                            ← Буцах
+                        </a>
+
+                        <button class="btn btn-primary rounded-pill px-4"
+                                value="{{ product.id }}"
+                                id="add-cart">
+                            🛒 Сагсанд нэмэх
+                        </button>
+
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+    $(document).on('click', '#add-cart', function(e) {
+            // preventDefault() - гүйцэтгэлийг зогсоох
+        e.preventDefault();
+        // AJAX хүсэлт илгээх
+        $.ajax({
+            // get, post, put, delete - хүсэлтийн төрлийг зааж өгнө
+            type: 'POST',
+            // url - хүсэлт илгээх URL хаяг
+            url: "{% url 'cart_add' %}",
+            // data - сервер рүү илгээх өгөгдөл
+            data: {
+                // 'product_id' - бүтээгдэхүүний ID, 'csrfmiddlewaretoken'
+                'product_id': $('#add-cart').val(),
+                'csrfmiddlewaretoken': '{{ csrf_token }}',
+                'action': 'post',
+            },
+            // Хүсэлт амжилттай болбол гүйцэтгэх функц
+            success: function(json) {
+                document.getElementById('cart_quantity').textContent = json.cart_qty;
+            },
+            // Хүсэлт амжилтгүй болбол гүйцэтгэх функц
+            error: function(xhr, errmsg, err) {
+                console.log(xhr.status + ": " + xhr.responseText);
+            }
+        });
+    })
+</script>
+
+{% endblock %}
