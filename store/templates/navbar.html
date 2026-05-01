@@ -13,8 +13,8 @@
                         <li><a class="dropdown-item" href="{% url 'home' %}">Бүх бүтээгдэхүүн</a></li>
                         <li><hr class="dropdown-divider" /></li>
                         <li><a class="dropdown-item" href="{% url 'category' 'Гар-утас' %}">Гар утас</a></li>
-                        <li><a class="dropdown-item" href="{% url 'category' 'Суурин-Компьютер' %}">Суурин Компьютер</a></li>
-                        <li><a class="dropdown-item" href="{% url 'category' 'Нөүтбүүк' %}">Нөүтбүүк</a></li>
+                        <li><a class="dropdown-item" href="{% url 'category' 'computer' %}">Суурин Компьютер</a></li>
+                        <li><a class="dropdown-item" href="{% url 'category' 'notebook' %}">Нөүтбүүк</a></li>
                     </ul>
                 </li>
                 {% if user.is_authenticated %}
