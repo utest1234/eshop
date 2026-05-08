@@ -64,10 +64,22 @@
                                 value="{{ product.id }}"
                                 id="add-cart">
                             🛒 Сагсанд нэмэх
+                        
                         </button>
 
                     </div>
+                    <div class="row">
+                     <div class="col-md-2">Тоо ширхэг</div>     
+                        <div class="col-md-2">     
+                            <select class="form-select" aria-label="Default select example" id="qty-cart">
+                            <option selected>Open this select menu</option>
+                            <option value="1">One</option>
+                            <option value="2">Two</option>
+                            <option value="3">Three</option>
+                            </select>
+                        </div>
 
+                    </div>
                 </div>
             </div>
 
@@ -91,8 +103,10 @@
             data: {
                 // 'product_id' - бүтээгдэхүүний ID, 'csrfmiddlewaretoken'
                 'product_id': $('#add-cart').val(),
+                'product_qty': $('#qty-cart option:selected').text(),
                 'csrfmiddlewaretoken': '{{ csrf_token }}',
                 'action': 'post',
+
             },
             // Хүсэлт амжилттай болбол гүйцэтгэх функц
             success: function(json) {

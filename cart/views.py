@@ -6,8 +6,9 @@ from store.models import Product
 # Create your views here.
 def cart(request):
     cart = Cart(request)
+    quantities= cart.get_quants()
     cart_products = cart.get_prods()
-    return render(request, 'cart.html', {'cart_products': cart_products})
+    return render(request, 'cart.html', {'cart_products': cart_products, 'quantities': quantities})
 
 def cart_add(request):
     cart = Cart(request)
@@ -17,3 +18,4 @@ def cart_add(request):
         cart.add(product=product)
         response = JsonResponse({'Product_name': product.name})
         return response
+    

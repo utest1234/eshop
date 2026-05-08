@@ -22,8 +22,17 @@
                 {% else %}
                 <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Нэвтрэх</a></li>
                 <li class="nav-item"><a class="nav-link" href="{% url 'register' %}">Бүртгүүлэх</a></li>
-                {% endif %}
                 
+                {% endif %}
+                <nav class="navbar bg-body-tertiary">
+  <div class="nav-item mx-2">
+    <form class="d-flex" role="search" method="get" action="{% url 'search' %}">
+        {% csrf_token %}
+      <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name='searched'/>
+      <button class="btn btn-outline-secondaryt" type="submit">Search</button>
+    </form>
+  </div>
+</nav>
             </ul>
             
             <form class="d-flex">

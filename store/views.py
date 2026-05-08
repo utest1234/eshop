@@ -1,7 +1,12 @@
+from email.mime import message
+from urllib import request
+
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import redirect, render
 import urllib
+
+from cart.cart import Cart
 from .models import Category, Product
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
@@ -63,3 +68,12 @@ def register_user(request):
         form = RegisterForm()
 
     return render(request, 'register.html', {'form': form})
+
+def search(request):
+    search_value = request.GET.get('searched', '')
+    result = []
+    if search_value:
+        result = Product.objects.filter(name__icontains=search_value)
+        if not result:
+            messages.success(request, 'Хайлтын үр дүн олдсонгүй')
+    return render(request, 'search.html', {'result': result, 'search_value': search_value})

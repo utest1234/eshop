@@ -31,3 +31,7 @@ class Cart():
         # Сагсны бүх бүтээгдэхүүнийг өгөгдлийн сангаас авна
         products = Product.objects.filter(id__in=product_ids)
         return products
+    
+    def get_quants(self):
+        quantities = self.cart
+        return quantities
