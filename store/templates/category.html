@@ -10,38 +10,41 @@
         </div>
     </div>
 </header>
+
 <!-- Section-->
 <section class="py-5">
     <div class="container px-4 px-lg-5 mt-5">
+
+        {% if user.is_authenticated and user.is_staff %}
+        <div class="d-flex justify-content-end mb-4">
+            <button class="btn-add-product" data-bs-toggle="modal" data-bs-target="#addProductModal">
+                <i class="bi bi-plus-lg me-2"></i>Бүтээгдэхүүн нэмэх
+            </button>
+        </div>
+        {% endif %}
+
         <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
             {% for product in products %}
             {% if product.is_sale %}
             <div class="col mb-5">
                 <div class="card h-100">
-                    <!-- Sale badge -->
                     <div class="badge bg-danger text-white position-absolute" style="top: 0.5rem; right: 0.5rem;">Sale</div>
-                    <!-- Product image-->
-                    <img class="card-img-top" src="{{ product.image.url }}" alt="..." />
-                    <!-- Product details-->
+                    <img class="card-img-top" src="{{ product.image.url }}" alt="{{ product.name }}" />
                     <div class="card-body p-4">
                         <div class="text-center">
-                            <!-- Product name-->
-                        <h5 class="fw-bolder">{{ product.name }}</h5>
-                        <!-- Sale price  -->
-                         <div class="d-flex justify-content-center small text-muted mb-2">
-                            <div class="bi-star-fill"></div>
-                            <div class="bi-star-fill"></div>
-                            <div class="bi-star-fill"></div>
-                            <div class="bi-star-fill"></div>
-                            <div class="bi-star-fill"></div>
-                        </div>
-                            <!-- Product price-->
+                            <h5 class="fw-bolder">{{ product.name }}</h5>
+                            <div class="d-flex justify-content-center small text-muted mb-2">
+                                <div class="bi-star-fill"></div>
+                                <div class="bi-star-fill"></div>
+                                <div class="bi-star-fill"></div>
+                                <div class="bi-star-fill"></div>
+                                <div class="bi-star-fill"></div>
+                            </div>
                             <strike>{{ product.price|floatformat:0 }}₮</strike>
                             <br>
                             <span class="text-danger fw-bold">{{ product.sale_price|floatformat:0 }}₮</span>
                         </div>
                     </div>
-                    <!-- Product actions-->
                     <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
                         <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="{% url 'product_detail' product.id %}">Дэлгэрэнгүй</a></div>
                     </div>
@@ -50,18 +53,20 @@
             {% else %}
             <div class="col mb-5">
                 <div class="card h-100">
-                    <!-- Product image-->
-                    <img class="card-img-top" src="{{ product.image.url }}" alt="..." />
-                    <!-- Product details-->
+                    <img class="card-img-top" src="{{ product.image.url }}" alt="{{ product.name }}" />
                     <div class="card-body p-4">
                         <div class="text-center">
-                            <!-- Product name-->
                             <h5 class="fw-bolder">{{ product.name }}</h5>
-                            <!-- Product price-->
+                            <div class="d-flex justify-content-center small text-muted mb-2">
+                                <div class="bi-star-fill"></div>
+                                <div class="bi-star-fill"></div>
+                                <div class="bi-star-fill"></div>
+                                <div class="bi-star-fill"></div>
+                                <div class="bi-star-fill"></div>
+                            </div>
                             {{ product.price|floatformat:0 }}₮
                         </div>
                     </div>
-                    <!-- Product actions-->
                     <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
                         <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="{% url 'product_detail' product.id %}">Дэлгэрэнгүй</a></div>
                     </div>
@@ -70,6 +75,93 @@
             {% endif %}
             {% endfor %}
         </div>
+
+        {% if not products %}
+        <div class="text-center py-5 empty-state">
+            <div class="empty-icon">📦</div>
+            <h3>Бүтээгдэхүүн байхгүй байна</h3>
+            <p>Энэ ангилалд одоогоор бүтээгдэхүүн нэмэгдээгүй байна.</p>
+            {% if user.is_authenticated and user.is_staff %}
+            <button class="btn-add-product mt-3" data-bs-toggle="modal" data-bs-target="#addProductModal">
+                <i class="bi bi-plus-lg me-2"></i>Эхний бүтээгдэхүүн нэмэх
+            </button>
+            {% endif %}
+        </div>
+        {% endif %}
+
     </div>
 </section>
+
+{% if user.is_authenticated and user.is_staff %}
+<!-- Add Product Modal -->
+<div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content product-modal">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addProductModalLabel">
+                    <i class="bi bi-plus-circle me-2"></i>Шинэ бүтээгдэхүүн нэмэх
+                </h5>
+                <button type="button" class="btn-close-modal" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="{% url 'add_product' category.name %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Бүтээгдэхүүний нэр</label>
+                            {{ product_form.name }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Ангилал</label>
+                            {{ product_form.category }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Үнэ (₮)</label>
+                            {{ product_form.price }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Зураг</label>
+                            {{ product_form.image }}
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Тайлбар</label>
+                            {{ product_form.description }}
+                        </div>
+                        <div class="col-12">
+                            <div class="sale-toggle-wrap">
+                                <label class="sale-toggle-label">
+                                    {{ product_form.is_sale }}
+                                    <span>Хямдралтай бүтээгдэхүүн</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-6" id="sale-price-wrap" style="display:none;">
+                            <label class="form-label">Хямдрал үнэ (₮)</label>
+                            {{ product_form.sale_price }}
+                        </div>
+                    </div>
+                    <div class="modal-footer-btns mt-4">
+                        <button type="button" class="btn-cancel" data-bs-dismiss="modal">Цуцлах</button>
+                        <button type="submit" class="btn-save">
+                            <i class="bi bi-check-lg me-1"></i>Хадгалах
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<script>
+    var isSaleCheck = document.getElementById('id_is_sale');
+    var salePriceWrap = document.getElementById('sale-price-wrap');
+    if (isSaleCheck) {
+        isSaleCheck.addEventListener('change', function() {
+            salePriceWrap.style.display = this.checked ? 'block' : 'none';
+        });
+    }
+</script>
 {% endblock %}

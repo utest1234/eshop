@@ -38,13 +38,15 @@ ALLOWED_HOSTS = ['.vercel.app','localhost','127.0.0.1']
 # Application definition 
 INSTALLED_APPS = [
     'whitenoise.runserver_nostatic',
+    'cloudinary_storage',           # 1. This MUST be above staticfiles
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles',
+    'django.contrib.staticfiles',    # 2. Only list this ONCE
     'django.contrib.humanize',
+    'cloudinary',                   # 3. This can go here or at the end
     'store',
     'cart',
 ]
@@ -138,3 +140,11 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': 'your_cloud_name',
+    'API_KEY': 'your_api_key',
+    'API_SECRET': 'your_api_secret'
+}
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'

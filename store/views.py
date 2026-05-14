@@ -11,9 +11,8 @@ from .models import Category, Product
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django import forms
-from .forms import RegisterForm
+from .forms import RegisterForm, ProductForm
 
-# Create your views here.
 def home(request):
     products = Product.objects.all()
     return render(request, 'home.html', {'products': products})
@@ -28,13 +27,31 @@ def products_detail(request, pk):
 def category(request, catname):
     catname = urllib.parse.unquote(catname).replace('-', ' ')
     try:
-        category = Category.objects.get(name=catname)
-        products = Product.objects.filter(category=category)
-        return render(request, 'category.html', {'products': products, 'category': category})
+        cat = Category.objects.get(name=catname)
+        products = Product.objects.filter(category=cat)
+        product_form = ProductForm(initial={'category': cat})
+        return render(request, 'category.html', {
+            'products': products,
+            'category': cat,
+            'product_form': product_form,
+        })
     except:
         messages.success(request, 'Тохирох ангилал олдсонгүй')
         return redirect('home')
-    
+
+def add_product(request, catname):
+    if not request.user.is_authenticated or not request.user.is_staff:
+        messages.error(request, 'Зөвхөн админ бүтээгдэхүүн нэмэх боломжтой')
+        return redirect('category', catname=catname)
+    if request.method == 'POST':
+        form = ProductForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Бүтээгдэхүүн амжилттай нэмэгдлээ!')
+        else:
+            messages.error(request, 'Мэдээллийг зөв бөглөнө үү.')
+    return redirect('category', catname=catname)
+
 def login_user(request):
     if request.method == 'POST':
         username = request.POST['username']
@@ -66,7 +83,6 @@ def register_user(request):
             messages.error(request, 'Бүртгүүлэхэд алдаа гарлаа. Мэдээллээ шалгаад дахин оролдоно уу.')
     else:
         form = RegisterForm()
-
     return render(request, 'register.html', {'form': form})
 
 def search(request):
