@@ -93,3 +93,16 @@ def search(request):
         if not result:
             messages.success(request, 'Хайлтын үр дүн олдсонгүй')
     return render(request, 'search.html', {'result': result, 'search_value': search_value})
+
+def home(request):
+    # Дата баазаас бүх бүтээгдэхүүнийг авна
+    products = Product.objects.all() 
+    # Хэрэв идэвхтэй барааг шүүх бол: Product.objects.filter(is_active=True)
+    
+    categories = Category.objects.all() # Дэд цэсэнд харуулах категориуд
+    
+    context = {
+        'products': products,
+        'categories': categories,
+    }
+    return render(request, 'home.html', context)
