@@ -38,15 +38,15 @@ ALLOWED_HOSTS = ['.vercel.app','localhost','127.0.0.1']
 # Application definition 
 INSTALLED_APPS = [
     'whitenoise.runserver_nostatic',
-    'cloudinary_storage',           # 1. This MUST be above staticfiles
+    'cloudinary_storage',  
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles',    # 2. Only list this ONCE
+    'django.contrib.staticfiles',
     'django.contrib.humanize',
-    'cloudinary',                   # 3. This can go here or at the end
+    'cloudinary',
     'store',
     'cart',
 ]
@@ -135,8 +135,8 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 # STATIC_ROOT нь цуглуулсан статик файлуудыг хадгалах байршлыг зааж өгдөг.
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # Whitenoise-ийг статик файлуудыг цуглуулах үед ашиглах хадгалах классыг зааж өгнө. 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
